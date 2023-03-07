@@ -95,6 +95,53 @@ app.delete("/articles", (req, res) => {
 });*/
 
 
+///Requests targetting a specific article
+
+app.route("/articles/:articleTitle")
+    .get((req,res) => {
+        Article.findOne({title: req.params.articleTitle}).then(function(foundArticle, err){
+            if(err){
+                console.log("No articles matching that title was found.");
+            }else{
+                res.send(foundArticle);
+            }
+        });
+    })
+
+    .put((req,res) => {
+        Article.updateOne({title: req.params.articleTitle}, {title: req.body.title, content: req.body.content}).then(function(updatedArticle, err){
+            if(err){
+                console.log("No articles updating that title was found.");
+            }else{
+                res.send("Successfully updated the article.");
+            }
+        });
+    })
+
+    .patch((req,res) => {
+        Article.updateOne({title: req.params.articleTitle},
+             //{$set: {title: req.body.title, content: req.body.content}})
+             {$set: req.body})
+             .then(function(updatedArticle, err){
+            if(err){
+                console.log("No articles updating that title was found.");
+            }else{
+                res.send("Successfully updated the article.");
+            }
+        });
+    })
+
+    .delete((req,res) => {
+        Article.deleteOne({title: req.params.articleTitle})
+        .then(function(deletedArticle, err){
+            if(err){
+                console.log("No articles deleting that title was found.");
+            }else{
+                res.send("Successfully deleted the article.");
+            }
+        });
+    });
+
 app.listen(3000, function(){
     console.log("Server started on port 3000");
 })
