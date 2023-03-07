@@ -22,7 +22,43 @@ const articleSchema = {
 
 const Article = new mongoose.model("Article", articleSchema);
 
-app.get("/articles", function(req,res){
+
+app.route("/articles")
+.get((req,res) => {
+    Article.find().then(function(foundArticles, err){
+        //console.log(foundArticles);
+        if(!err)
+            res.send(foundArticles);
+        else
+            console.log(err);
+    });
+})
+.post((req, res) => {
+    console.log(req.body.title);
+    console.log(req.body.content);
+
+    const newArticle = Article(
+        {
+            title: req.body.title,
+            content: req.body.content
+        }
+    );
+
+    newArticle.save().then(function(savedArticle, err) {
+        if (err) return handleError(err);
+        // saved!
+        else res.send("Successfully added a new article.");
+      });
+
+})
+.delete((req, res) => {
+    Article.deleteMany().then(function(deletedArticles, err){
+        if(err) return handleError(err);
+        else res.send("The articles are successfully deleted.");
+    });
+});
+
+/*app.get("/articles", (req,res) => {
     Article.find().then(function(foundArticles, err){
         //console.log(foundArticles);
         if(!err)
@@ -31,6 +67,32 @@ app.get("/articles", function(req,res){
             console.log(err);
     });
 });
+
+app.post("/articles", (req, res) => {
+    console.log(req.body.title);
+    console.log(req.body.content);
+
+    const newArticle = Article(
+        {
+            title: req.body.title,
+            content: req.body.content
+        }
+    );
+
+    newArticle.save().then(function(savedArticle, err) {
+        if (err) return handleError(err);
+        // saved!
+        else res.send("Successfully added a new article.");
+      });
+
+});
+
+app.delete("/articles", (req, res) => {
+    Article.deleteMany().then(function(deletedArticles, err){
+        if(err) return handleError(err);
+        else res.send("The articles are successfully deleted.");
+    });
+});*/
 
 
 app.listen(3000, function(){
